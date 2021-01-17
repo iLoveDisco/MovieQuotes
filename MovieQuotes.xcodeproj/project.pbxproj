@@ -13,6 +13,7 @@
 		8D2945C125B3E92300B6508A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2945BF25B3E92300B6508A /* Main.storyboard */; };
 		8D2945C325B3E92400B6508A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D2945C225B3E92400B6508A /* Assets.xcassets */; };
 		8D2945C625B3E92400B6508A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2945C425B3E92400B6508A /* LaunchScreen.storyboard */; };
+		8D2945D325B3F55700B6508A /* MovieQuotesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2945D225B3F55700B6508A /* MovieQuotesTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		8D2945C225B3E92400B6508A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D2945C525B3E92400B6508A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D2945C725B3E92400B6508A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D2945D225B3F55700B6508A /* MovieQuotesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuotesTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				8D2945C225B3E92400B6508A /* Assets.xcassets */,
 				8D2945C425B3E92400B6508A /* LaunchScreen.storyboard */,
 				8D2945C725B3E92400B6508A /* Info.plist */,
+				8D2945D225B3F55700B6508A /* MovieQuotesTableViewController.swift */,
 			);
 			path = MovieQuotes;
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 				8D2945BE25B3E92300B6508A /* ViewController.swift in Sources */,
 				8D2945BA25B3E92300B6508A /* AppDelegate.swift in Sources */,
 				8D2945BC25B3E92300B6508A /* SceneDelegate.swift in Sources */,
+				8D2945D325B3F55700B6508A /* MovieQuotesTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

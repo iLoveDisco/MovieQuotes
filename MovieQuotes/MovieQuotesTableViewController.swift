@@ -13,6 +13,7 @@ class MovieQuotesTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
                                                             target: self,
                                                             action: #selector(showAddQuoteDialogue))
@@ -22,7 +23,35 @@ class MovieQuotesTableViewController: UITableViewController {
     }
     
     @objc func showAddQuoteDialogue() {
-        print("You pressed the add button")
+        let alertController = UIAlertController(title: "Create a new movie quote",
+                                                message: "",
+                                                preferredStyle: .alert)
+        
+        // Configure the alert controller
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let submitAction = UIAlertAction(title: "Create Quote",
+                                         style: .default,
+                                         handler: {(action) in
+                                            let quoteTextField = alertController.textFields![0]
+                                            let movieTextField = alertController.textFields![1]
+                                            let newMovieQuote = MovieQuote(quote: quoteTextField.text!,
+                                                                           movie: movieTextField.text!)
+                                            self.movieQuotes.insert(newMovieQuote, at: 0)
+                                            self.tableView.reloadData()
+                                         })
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(submitAction)
+        
+        alertController.addTextField(configurationHandler: { (textField) in
+            textField.placeholder = "Movie Quote"
+        })
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Movie"
+        }
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

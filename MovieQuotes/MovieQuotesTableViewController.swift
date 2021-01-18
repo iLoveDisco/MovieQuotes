@@ -13,8 +13,16 @@ class MovieQuotesTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
+                                                            target: self,
+                                                            action: #selector(showAddQuoteDialogue))
+        
         movieQuotes.append(MovieQuote(quote: "It's not about the money, it's about sending a message", movie: "The Dark Knight Rises"))
         movieQuotes.append(MovieQuote(quote: "Now's not a good time to be a Nazi", movie: "Jo Jo Rabbit"))
+    }
+    
+    @objc func showAddQuoteDialogue() {
+        print("You pressed the add button")
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

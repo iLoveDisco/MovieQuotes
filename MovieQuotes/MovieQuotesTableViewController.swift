@@ -13,7 +13,7 @@ class MovieQuotesTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
                                                             target: self,
                                                             action: #selector(showAddQuoteDialogue))
@@ -66,5 +66,12 @@ class MovieQuotesTableViewController: UITableViewController {
         cell.detailTextLabel?.text = movieQuotes[indexPath.row].movie
         
         return cell
+    }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            movieQuotes.remove(at: indexPath.row)
+            tableView.reloadData()
+            print("Delete this quote")
+        }
     }
 }

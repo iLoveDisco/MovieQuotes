@@ -13,7 +13,7 @@ class MovieQuotesTableViewController: UITableViewController {
     let detailSegueId = "DetailSegue"
     var movieQuotes = [MovieQuote]()
     var movieQuotesRef: CollectionReference!
-    
+    var movieQuoteListener: ListenerRegistration!
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
@@ -27,7 +27,7 @@ class MovieQuotesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         super.tableView.reloadData()
-        movieQuotesRef.order(by: "created", descending: true).limit(to: 50).addSnapshotListener { (querySnapshot, error) in
+        movieQuoteListener = movieQuotesRef.order(by: "created", descending: true).limit(to: 50).addSnapshotListener { (querySnapshot, error) in
             if let querySnapshot = querySnapshot {
                 self.movieQuotes.removeAll()
                 querySnapshot.documents.forEach { (docSnapshot) in
@@ -38,6 +38,11 @@ class MovieQuotesTableViewController: UITableViewController {
                 print("Error, not able to get movie quote")
             }
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        movieQuoteListener.remove()
     }
     
     @objc func showAddQuoteDialogue() {
@@ -88,6 +93,7 @@ class MovieQuotesTableViewController: UITableViewController {
         
         return cell
     }
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let movieQuoteToDelete = movieQuotes[indexPath.row]
@@ -99,6 +105,7 @@ class MovieQuotesTableViewController: UITableViewController {
         if segue.identifier == detailSegueId {
             if let indexPath = tableView.indexPathForSelectedRow {
                 (segue.destination as! MovieQuoteDetailViewController).movieQuote = movieQuotes[indexPath.row]
+                (segue.destination as! MovieQuoteDetailViewController).movieQuoteRef = movieQuotesRef.document(movieQuotes[indexPath.row].id!)
             }
         }
     }

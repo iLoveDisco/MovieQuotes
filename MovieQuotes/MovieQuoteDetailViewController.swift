@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class MovieQuoteDetailViewController: UIViewController {
     
@@ -13,12 +14,35 @@ class MovieQuoteDetailViewController: UIViewController {
     @IBOutlet weak var movieQuoteLabel: UILabel!
     
     var movieQuote: MovieQuote?
+    var movieQuoteRef: DocumentReference!
+    var movieQuoteListener: ListenerRegistration!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit,
                                                             target: self,
                                                             action: #selector(showEditDialogue))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        movieQuoteListener = movieQuoteRef.addSnapshotListener({(docSnapshot, error) in
+            if let error = error {
+                print("Error getting movie quote \(error)")
+                return
+            }
+            if !docSnapshot!.exists {
+                print("Doc snapshot doesn't exist")
+                return
+            }
+            self.movieQuote = MovieQuote(docSnapshot!)
+            self.updateView()
+        })
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        movieQuoteListener.remove()
     }
     
     @objc func showEditDialogue(){
@@ -33,9 +57,11 @@ class MovieQuoteDetailViewController: UIViewController {
                                          handler: {(action) in
                                             let quoteTextField = alertController.textFields![0]
                                             let movieTextField = alertController.textFields![1]
-                                            self.movieQuote?.quote = quoteTextField.text!
-                                            self.movieQuote?.movie = movieTextField.text!
-                                            self.updateView()
+                                            
+                                            self.movieQuoteRef.updateData([
+                                                "quote": quoteTextField.text!,
+                                                "movie": movieTextField.text!
+                                            ])
                                          })
         
         alertController.addAction(cancelAction)
@@ -52,10 +78,7 @@ class MovieQuoteDetailViewController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateView()
-    }
+
     
     func updateView() {
         movieTitleLabel.text = movieQuote?.movie

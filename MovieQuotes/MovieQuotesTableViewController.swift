@@ -27,7 +27,7 @@ class MovieQuotesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         super.tableView.reloadData()
-        movieQuotesRef.addSnapshotListener { (querySnapshot, error) in
+        movieQuotesRef.order(by: "created", descending: true).limit(to: 50).addSnapshotListener { (querySnapshot, error) in
             if let querySnapshot = querySnapshot {
                 self.movieQuotes.removeAll()
                 querySnapshot.documents.forEach { (docSnapshot) in
@@ -52,9 +52,12 @@ class MovieQuotesTableViewController: UITableViewController {
                                          handler: {(action) in
                                             let quoteTextField = alertController.textFields![0]
                                             let movieTextField = alertController.textFields![1]
-                                            let newMovieQuote = MovieQuote(quote: quoteTextField.text!,
-                                                                           movie: movieTextField.text!)
-                                            self.movieQuotes.insert(newMovieQuote, at: 0)
+                                            
+                                            self.movieQuotesRef.addDocument(data: [
+                                                "quote": quoteTextField.text!,
+                                                "movie": movieTextField.text!,
+                                                "created": Timestamp.init()
+                                            ])
                                             self.tableView.reloadData()
                                          })
         

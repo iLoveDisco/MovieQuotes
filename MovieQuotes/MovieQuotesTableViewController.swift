@@ -90,9 +90,8 @@ class MovieQuotesTableViewController: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            movieQuotes.remove(at: indexPath.row)
-            tableView.reloadData()
-            print("Delete this quote")
+            let movieQuoteToDelete = movieQuotes[indexPath.row]
+            movieQuotesRef.document(movieQuoteToDelete.id!).delete()
         }
     }
     

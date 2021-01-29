@@ -26,14 +26,30 @@ class MovieQuotesTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        super.tableView.reloadData()
+        
+        if (Auth.auth().currentUser == nil) {
+            // you are not signed in. Sign in anonymously
+            print("Signing in")
+            Auth.auth().signInAnonymously { (authResult, error) in
+                if let error = error {
+                    print("Something went wrong with anonymous auth")
+                    return
+                }
+                print ("You are signed in as \(Auth.auth().currentUser?.email)")
+            }
+        } else {
+            // you are signed in
+            print("You are already signed in as \(Auth.auth().currentUser?.email)")
+        }
+        
         movieQuoteListener = movieQuotesRef.order(by: "created", descending: true).limit(to: 50).addSnapshotListener { (querySnapshot, error) in
             if let querySnapshot = querySnapshot {
                 self.movieQuotes.removeAll()
                 querySnapshot.documents.forEach { (docSnapshot) in
                     self.movieQuotes.append(MovieQuote(docSnapshot))
-                    self.tableView.reloadData()
+                    
                 }
+                self.tableView.reloadData()
             } else {
                 print("Error, not able to get movie quote")
             }

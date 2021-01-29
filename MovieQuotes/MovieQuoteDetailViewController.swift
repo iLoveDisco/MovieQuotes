@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 
 class MovieQuoteDetailViewController: UIViewController {
     
@@ -36,6 +37,13 @@ class MovieQuoteDetailViewController: UIViewController {
                 return
             }
             self.movieQuote = MovieQuote(docSnapshot!)
+            
+            if (Auth.auth().currentUser!.uid == self.movieQuote?.author) {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.showEditDialogue))
+            } else {
+                self.navigationItem.rightBarButtonItem = nil
+            }
+            
             self.updateView()
         })
     }

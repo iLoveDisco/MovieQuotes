@@ -15,13 +15,14 @@ class MovieQuotesTableViewController: UITableViewController {
     var movieQuotes = [MovieQuote]()
     var movieQuotesRef: CollectionReference!
     var movieQuoteListener: ListenerRegistration!
+    var isShowingAllQuotes = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
-                                                            target: self,
-                                                            action: #selector(showAddQuoteDialogue))
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "☰", style: .plain, target: self, action: #selector(showMenu))
+
         movieQuotesRef = Firestore.firestore().collection("Movie Quotes")
     }
     
@@ -43,7 +44,20 @@ class MovieQuotesTableViewController: UITableViewController {
             print("You are already signed in as \(Auth.auth().currentUser?.email)")
         }
         
-        movieQuoteListener = movieQuotesRef.order(by: "created", descending: true).limit(to: 50).addSnapshotListener { (querySnapshot, error) in
+        startListening()
+    }
+    
+    func startListening() {
+        if movieQuoteListener != nil {
+            movieQuoteListener.remove()
+        }
+        var query = movieQuotesRef.order(by: "created", descending: true).limit(to: 50)
+        
+        if (!isShowingAllQuotes) {
+            query = query.whereField("author", isEqualTo: Auth.auth().currentUser?.uid)
+        }
+        
+        movieQuoteListener = query.addSnapshotListener { (querySnapshot, error) in
             if let querySnapshot = querySnapshot {
                 self.movieQuotes.removeAll()
                 querySnapshot.documents.forEach { (docSnapshot) in
@@ -60,6 +74,35 @@ class MovieQuotesTableViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         movieQuoteListener.remove()
+    }
+    
+    @objc func showMenu() {
+        let alertController = UIAlertController(title: "Manage your Quotes",
+                                                message: nil,
+                                                preferredStyle: .actionSheet)
+        
+        // Configure the alert controller
+        let createQuoteAction = UIAlertAction(title: "Create Quote",
+                                         style: .default,
+                                         handler: {(action) in
+                                            self.showAddQuoteDialogue()
+                                         })
+        
+        let showMyQuotesAction = UIAlertAction(title: self.isShowingAllQuotes ? "My Quotes" : "All Quotes", style: .default) { (action) in
+            self.isShowingAllQuotes = !self.isShowingAllQuotes
+            self.startListening()
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+
+        
+        alertController.addAction(createQuoteAction)
+        alertController.addAction(showMyQuotesAction)
+        alertController.addAction(cancelAction)
+        
+        
+
+        present(alertController, animated: true, completion: nil)
     }
     
     @objc func showAddQuoteDialogue() {

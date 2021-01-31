@@ -16,6 +16,13 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if Auth.auth().currentUser != nil {
+            print("\(Auth.auth().currentUser?.email) is already signed in")
+            self.performSegue(withIdentifier: self.showListSegueID, sender: self)
+        }
+    }
 
     @IBAction func pressedRegisterButton(_ sender: Any) {
         let email = emailTextField.text!

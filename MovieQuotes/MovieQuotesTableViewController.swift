@@ -16,6 +16,7 @@ class MovieQuotesTableViewController: UITableViewController {
     var movieQuotesRef: CollectionReference!
     var movieQuoteListener: ListenerRegistration!
     var isShowingAllQuotes = true
+    var authListenerHandle : AuthStateDidChangeListenerHandle!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,9 +29,13 @@ class MovieQuotesTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-
-        
+        authListenerHandle = Auth.auth().addStateDidChangeListener({ (auth, user) in
+            if (Auth.auth().currentUser == nil) {
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                print("You are signed in as \(Auth.auth().currentUser?.email)")
+            }
+        })
         startListening()
     }
     
@@ -61,6 +66,7 @@ class MovieQuotesTableViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         movieQuoteListener.remove()
+        Auth.auth().removeStateDidChangeListener(authListenerHandle)
     }
     
     @objc func showMenu() {
@@ -80,11 +86,21 @@ class MovieQuotesTableViewController: UITableViewController {
             self.startListening()
         }
 
+        let signOutAction = UIAlertAction(title: "Sign Out", style: .default) { (action) in
+            do {
+                try Auth.auth().signOut()
+            } catch {
+                print("Error with signing out")
+            }
+        }
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
 
         
+        
         alertController.addAction(createQuoteAction)
         alertController.addAction(showMyQuotesAction)
+        alertController.addAction(signOutAction)
         alertController.addAction(cancelAction)
         
         
